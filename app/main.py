@@ -1,5 +1,5 @@
 from time import sleep
-import exceptions
+from . import exceptions
 
 
 class Reservoir(object):
@@ -124,12 +124,12 @@ class Plate(object):
         self.warming_state = False
         self.plate_level_sensor = PlateLevelSensor()
 
-    def start_warming(self,pot):
+    def start_warming(self, pot):
         if (not self.plate_level_sensor.check_the_plate_empty_pot_level(pot) and
                 not self.plate_level_sensor.check_the_plate_empty(pot)):
             self.warming_state = True
 
-    def stop_warming(self):
+    def stop_warming(self, pot):
         if (self.plate_level_sensor.check_the_plate_empty_pot_level(pot) or
                 self.plate_level_sensor.check_the_plate_empty(pot)):
             self.warming_state = False
@@ -223,7 +223,7 @@ class CoffeeMaker(object):
             raise exceptions.TakePotException()
 
         if self.plate.is_warming():
-            self.plate.stop_warming()
+            self.plate.stop_warming(pot)
         pot_returned = self.pot
         self.pot = None
         return pot_returned
@@ -237,14 +237,3 @@ class CoffeeMaker(object):
                 not self.plate_level_sensor.check_the_plate_empty_pot_level(self.pot) and
                 not self.plate.is_warming()):
             self.plate.start_warming(self.pot)
-
-
-if __name__ == '__main__':
-    pot = Pot()
-    coffeemaker = CoffeeMaker()
-    coffeemaker.put_pot(pot)
-    coffeemaker.pour_water_into_the_boiler(400)
-    # coffeemaker.drop_coffee(400)
-    coffeemaker.brew_coffee()
-    pot = coffeemaker.take_pot(pot)
-    print("Приготовлиось кофе:", pot.get_current_weight() - pot.initial_weight)
