@@ -40,7 +40,7 @@ class WaterHeater(object):
     def water_heating(self):
         while self.water_temperature <= 100:
             sleep(0.1)
-            self.water_temperature += 1.5
+            self.water_temperature += 0.91
 
     def get_current_water_heating(self):
         return self.water_temperature
@@ -206,6 +206,7 @@ class CoffeeMaker(object):
                 raise exceptions.CheckTheCoffeeException()
             self.state_pressure_valve = False
             self.pump.push_water(self.pot)
+
             if self.check_state_drink_is_ready():
                 self.indicator_ready_is_drink = True
                 self.state_coffee_brew_in_progress = False
