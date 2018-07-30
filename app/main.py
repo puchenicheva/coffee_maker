@@ -103,7 +103,7 @@ class Pump(object):
         self.reservoir = reservoir
 
     def pour_water(self, step, pot):
-        pot.increase_weight(self.reservoir.reduce_weight(step))
+        pot.increase_weight(self.reservoir.reduce_weight(self.water_step))
 
     def push_water(self, pot):
         while self.reservoir.get_current_weight() > 0:
@@ -147,7 +147,6 @@ class PlateLevelSensor(object):
 
 
 class CoffeeMaker(object):
-
     def __init__(self):
         self.reservoir = Reservoir()
         self.plate = Plate()
@@ -213,8 +212,8 @@ class CoffeeMaker(object):
                 self.state_pressure_valve = True
                 self.plate.start_warming(self.pot)
 
-    def pour_water_into_the_boiler(self, reservoir):
-        self.reservoir.increase_weight(reservoir)
+    def pour_water_into_the_boiler(self, weight):
+        self.reservoir.increase_weight(weight)
 
     def drop_coffee(self, amount_coffee):
         self.amount_coffee.change_amount(amount_coffee)
