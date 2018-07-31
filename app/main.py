@@ -19,8 +19,9 @@ class Reservoir(object):
             self.current_weight -= weight
             return weight
         else:
+            x = self.current_weight
             self.current_weight = 0
-            return self.current_weight - weight
+            return 0 - x * (-1)
 
 
 class WaterLevelSensor(object):
@@ -38,9 +39,9 @@ class WaterHeater(object):
         self.water_temperature = self.room_temperature
 
     def water_heating(self):
-        while self.water_temperature <= 100:
+        while self.water_temperature <= 99.9:
             sleep(0.1)
-            self.water_temperature += 0.91
+            self.water_temperature += 1
 
     def get_current_water_heating(self):
         return self.water_temperature
@@ -51,7 +52,7 @@ class WaterHeatingSensor(object):
         self.water_heater = water_heater
 
     def check_temperature_water(self):
-        return self.water_heater.get_current_water_heating() >= 100
+        return self.water_heater.get_current_water_heating() == 100
 
 
 class AmountCoffee(object):
@@ -223,6 +224,7 @@ class CoffeeMaker(object):
             raise exceptions.TakePotException()
 
         if self.plate.is_warming():
+            self.plate_level_sensor.check_the_plate_empty(self.pot)
             self.plate.stop_warming(pot)
         pot_returned = self.pot
         self.pot = None
@@ -233,7 +235,6 @@ class CoffeeMaker(object):
             raise exceptions.PutPotException()
 
         self.pot = pot
-        if (self.state_coffee_brew_in_progress and
-                not self.plate_level_sensor.check_the_plate_empty_pot_level(self.pot) and
+        if (not self.plate_level_sensor.check_the_plate_empty_pot_level(self.pot) and
                 not self.plate.is_warming()):
             self.plate.start_warming(self.pot)
