@@ -86,10 +86,6 @@ class TestPot(unittest.TestCase):
         self.pot = main.Pot()
         self.weight = random.randint(100, 999)
 
-    def test_increase_weight(self):
-        self.pot.increase_weight(self.weight)
-        assert self.pot.current_weight == self.weight
-
     def test_reduce_weight(self):
         self.pot.increase_weight(self.weight)
         self.pot.reduce_weight(self.weight)
