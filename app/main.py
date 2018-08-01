@@ -21,7 +21,7 @@ class Reservoir(object):
         else:
             x = self.current_weight
             self.current_weight = 0
-            return 0 - x * (-1)
+            return x
 
 
 class WaterLevelSensor(object):

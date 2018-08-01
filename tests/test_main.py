@@ -5,8 +5,6 @@ import random
 
 
 class TestReservoir(unittest.TestCase):
-    initial_weight = 0
-
     def setUp(self):
         self.reservoir = main.Reservoir()
         self.weight = random.randint(100, 999)
