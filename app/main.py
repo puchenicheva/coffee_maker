@@ -19,8 +19,9 @@ class Reservoir(object):
             self.current_weight -= weight
             return weight
         else:
+            x = self.current_weight
             self.current_weight = 0
-            return self.current_weight - weight
+            return x
 
 
 class WaterLevelSensor(object):
@@ -38,9 +39,9 @@ class WaterHeater(object):
         self.water_temperature = self.room_temperature
 
     def water_heating(self):
-        while self.water_temperature <= 100:
+        while self.water_temperature <= 99.9:
             sleep(0.1)
-            self.water_temperature += 1.5
+            self.water_temperature += 1
 
     def get_current_water_heating(self):
         return self.water_temperature
@@ -51,7 +52,7 @@ class WaterHeatingSensor(object):
         self.water_heater = water_heater
 
     def check_temperature_water(self):
-        return self.water_heater.get_current_water_heating() >= 100
+        return self.water_heater.get_current_water_heating() == 100
 
 
 class AmountCoffee(object):
@@ -103,7 +104,7 @@ class Pump(object):
         self.reservoir = reservoir
 
     def pour_water(self, step, pot):
-        pot.increase_weight(self.reservoir.reduce_weight(step))
+        pot.increase_weight(self.reservoir.reduce_weight(self.water_step))
 
     def push_water(self, pot):
         while self.reservoir.get_current_weight() > 0:
@@ -147,7 +148,6 @@ class PlateLevelSensor(object):
 
 
 class CoffeeMaker(object):
-
     def __init__(self):
         self.reservoir = Reservoir()
         self.plate = Plate()
@@ -206,14 +206,15 @@ class CoffeeMaker(object):
                 raise exceptions.CheckTheCoffeeException()
             self.state_pressure_valve = False
             self.pump.push_water(self.pot)
+
             if self.check_state_drink_is_ready():
                 self.indicator_ready_is_drink = True
                 self.state_coffee_brew_in_progress = False
                 self.state_pressure_valve = True
                 self.plate.start_warming(self.pot)
 
-    def pour_water_into_the_boiler(self, reservoir):
-        self.reservoir.increase_weight(reservoir)
+    def pour_water_into_the_boiler(self, weight):
+        self.reservoir.increase_weight(weight)
 
     def drop_coffee(self, amount_coffee):
         self.amount_coffee.change_amount(amount_coffee)
@@ -223,6 +224,7 @@ class CoffeeMaker(object):
             raise exceptions.TakePotException()
 
         if self.plate.is_warming():
+            self.plate_level_sensor.check_the_plate_empty(self.pot)
             self.plate.stop_warming(pot)
         pot_returned = self.pot
         self.pot = None
@@ -233,7 +235,6 @@ class CoffeeMaker(object):
             raise exceptions.PutPotException()
 
         self.pot = pot
-        if (self.state_coffee_brew_in_progress and
-                not self.plate_level_sensor.check_the_plate_empty_pot_level(self.pot) and
+        if (not self.plate_level_sensor.check_the_plate_empty_pot_level(self.pot) and
                 not self.plate.is_warming()):
             self.plate.start_warming(self.pot)
