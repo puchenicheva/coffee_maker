@@ -1,1 +1,4 @@
-Coverage version 4.5.1 
+coverage==4.5.1
+pip == 18.0
+
+
